@@ -8,3 +8,50 @@ SELECT name, escape_attempts FROM animals WHERE weight_kg > 10.5;
 SELECT * FROM animals WHERE neutered = 'true';
 SELECT * FROM animals WHERE name != 'Gabumon';
 SELECT * FROM animals WHERE weight_kg BETWEEN 10.40 AND 17.3;
+
+/*Inside a transaction update the animals table by setting the species column to unspecified. Verify that change was made. Then roll back the change and verify that species columns went back to the state before transaction.*/
+
+BEGIN;
+UPDATE animals SET species = 'unspecified'  WHERE neutered = 'false';
+UPDATE animals SET species = 'unspecified'  WHERE neutered = 'true';
+SELECT * FROM animals;
+ROLLBACK;
+SELECT * FROM animals;
+
+
+/*Set species of all animals with names ending 'mon' to 'digimon' */
+
+BEGIN;
+UPDATE animals SET species = 'digimon'  WHERE name like '%mon';
+UPDATE animals SET species = 'pokemon'  WHERE name not like '%mon';
+COMMIT;
+SELECT * FROM animals;
+
+
+/*Now, take a deep breath and... Inside a transaction delete all records in the animals table, then roll back the transaction. After the roll back verify if all records in the animals table still exist. After that you can start breath as usual ;)*/
+
+BEGIN;
+SAVEPOINT SP1;
+DELETE FROM animals WHERE species = 'digimon';
+DELETE FROM animals WHERE species = 'pokemon';
+SELECT * FROM animals;
+ROLLBACK TO SP1;
+SELECT * FROM animals;
+
+/* inside a transaction delete, create a savepoint, rollback and update */
+
+BEGIN;
+DELETE FROM animals WHERE date_of_birth > '2022-01-01';
+SAVEPOINT SP1;
+UPDATE animals SET weight_kg = weight_kg * 1;
+ROLLBACK TO SP1;
+COMMIT;
+
+/* write queries to answer the following questions */
+
+SELECT COUNT(*) FROM animals;
+SELECT COUNT(*) FROM animals WHERE escape_attempts < 1;
+SELECT AVG(weight_kg) FROM animals;
+SELECT MAX(escape_attempts) FROM animals;
+SELECT MAX(weight_kg), MIN(weight_kg) FROM animals GROUP BY species;
+SELECT AVG(escape_attempts) FROM animals WHERE date_of_birth BETWEEN '1990-01-01' AND '2000-01-01' GROUP BY species;
