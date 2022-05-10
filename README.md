@@ -6,7 +6,7 @@
 - clinic employees
 - visits
 
-![screenshot](./images/Database.PNG)
+![screenshot](./images/Database-Screenshoot.PNG)
 
 
 ## Getting Started
