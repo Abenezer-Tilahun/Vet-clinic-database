@@ -64,3 +64,5 @@ PRIMARY KEY(visit_id )
 
 ALTER TABLE owners ADD COLUMN email VARCHAR(120);
 
+CREATE INDEX ON owners(email);
+
